@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+</head>
+    <body>
+        <header class="header">
+            <img src="/assets/pokedex-logo.svg" class="logo" alt="Logo">
+            <nav class="nav-items">
+                <a href="" class="active">Home</a>
+                <a href="">Pokédex</a>
+            </nav>
+
+            <button class="mobile-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobile-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="mobile-overlay"></div>
+
+            <nav class="nav-mobile" aria-label="Navegação mobile">
+                <a href="" class="active">Home</a>
+                <a href="">Pokédex</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="container">
+                <div class="search-wrap">
+                    <div class="search">
+                        <input data-js="search-input" type="text" placeholder="Faça uma busca pelo nome do pokémon" />
+                        <img class="icon" src="/assets/search-icon.svg" alt="" />
+                    </div>
+                    <select data-js="type-filter" class="type-filter">
+                        <option value="">Todos os tipos</option>
+                    </select>
+                    <button data-js="clear-filters" class="clear-filters">Limpar filtros</button>
+                </div>
+                <ul data-js="pokemons-list" class="pokedex"></ul>
+            </div>
+            <div data-js="pagination" class="pagination"></div>
+        </main>
+
+        <script type="module" src="./js/app.js"></script>
+
+        <div data-js="modal-overlay" class="modal-overlay hidden">
+        <div class="modal">
+            <button data-js="modal-close" class="modal__close">✕</button>
+            <div data-js="modal-content"></div>
+        </div>
+        </div>
+    </body>
+</html>
