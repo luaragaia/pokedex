@@ -143,9 +143,6 @@ export const PokemonAPI = {
     return { pokemons: details.map(data => this.mapPokemon(data)), total: filtered.length }
   }
 }
-
-export const getPokemonDetails = (url) => PokemonAPI.fetchDetails(url)
-export const mapPokemon = (data) => PokemonAPI.mapPokemon(data)
 export const getPokemons = (page, perPage) => PokemonAPI.fetchList(page, perPage)
 export const getPokemonsByType = (type, page, perPage) => PokemonAPI.fetchByType(type, page, perPage)
 export const searchPokemons = (query, page, perPage) => PokemonAPI.search(query, page, perPage)

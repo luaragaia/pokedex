@@ -44,7 +44,7 @@ export const renderPokemons = (pokemons) => {
   ul.append(fragment)
 }
 
-export const renderPagination = () => {
+export const renderPagination = (onPageChange) => {
   const container = document.querySelector('[data-js="pagination"]')
   if (!container) return
 
@@ -86,7 +86,7 @@ export const renderPagination = () => {
   container.querySelectorAll('[data-page]').forEach(el => {
     el.addEventListener('click', async () => {
       appState.set({ currentPage: Number(el.dataset.page) })
-      await reloadPokemons()
+      await onPageChange()
     })
   })
 
@@ -97,7 +97,7 @@ export const renderPagination = () => {
     prevBtn.addEventListener('click', async () => {
       if (state.currentPage > 1) {
         appState.set({ currentPage: state.currentPage - 1 })
-        await reloadPokemons()
+        await onPageChange()
       }
     })
   }
@@ -106,34 +106,9 @@ export const renderPagination = () => {
     nextBtn.addEventListener('click', async () => {
       if (state.currentPage < totalPages) {
         appState.set({ currentPage: state.currentPage + 1 })
-        await reloadPokemons()
+        await onPageChange()
       }
     })
-  }
-}
-
-const reloadPokemons = async () => {
-  const { getPokemons, getPokemonsByType, searchPokemons } = await import('./api.js')
-  const { setLoading, showError } = await import('./utils.js')
-
-  setLoading(true)
-  const state = appState.get()
-
-  try {
-    let result
-    if (state.query) {
-      result = await searchPokemons(state.query, state.currentPage, state.perPage)
-    } else if (state.activeType) {
-      result = await getPokemonsByType(state.activeType, state.currentPage, state.perPage)
-    } else {
-      result = await getPokemons(state.currentPage, state.perPage)
-    }
-    appState.set({ total: result.total })
-    renderPokemons(result.pokemons)
-    renderPagination()
-  } catch (error) {
-    console.error('Erro:', error)
-    showError('Erro ao carregar pokémons.')
   }
 }
 
@@ -169,21 +144,6 @@ export const openModal = async (pokemon) => {
   let captureDifficulty = 'Muito Difícil'
   if (captureRatePercent > 66) captureDifficulty = 'Fácil'
   else if (captureRatePercent > 33) captureDifficulty = 'Médio'
-
-  const evolutions = pokemon.evolutions.length > 1 ? `
-    <div class="modal__evolutions">
-      <h3>Evoluções</h3>
-      <div class="evolution-chain">
-        ${pokemon.evolutions.map((evo, i) => `
-          <div class="evolution-item ${evo.id === pokemon.id ? 'current' : ''}">
-            <img src="${evo.imgUrl}" alt="${evo.name}" />
-            <span>${evo.name[0].toUpperCase() + evo.name.slice(1)}</span>
-          </div>
-          ${i < pokemon.evolutions.length - 1 ? '<span class="evolution-arrow">→</span>' : ''}
-        `).join('')}
-      </div>
-    </div>
-  ` : ''
 
   content.innerHTML = `
     <div class="modal__header">
@@ -232,7 +192,6 @@ export const openModal = async (pokemon) => {
         <div class="stats-grid">${statRows}</div>
       </div>
 
-      ${evolutions}
     </div>
   `
 
@@ -302,34 +261,4 @@ export const closeModal = () => {
     overlay.classList.add('hidden')
     document.body.style.overflow = ''
   }
-}
-
-export const renderFilters = async () => {
-  const select = document.querySelector('[data-js="type-filter"]')
-  if (!select) return
-
-  const types = Object.keys(import.meta.url.includes('constants') ? {} :
-    await import('./constants.js').then(m => m.POKEMON_TYPES))
-
-  const currentOptions = Array.from(select.options).filter(opt => opt.value !== '')
-  if (currentOptions.length === 0) {
-    types.forEach(type => {
-      const option = document.createElement('option')
-      option.value = type
-      option.textContent = getTypeName(type)
-      option.style.color = getTypeColor(type)
-      option.style.fontWeight = '600'
-      option.dataset.color = getTypeColor(type)
-      select.appendChild(option)
-    })
-  }
-
-  updateSelectStyles(select)
-}
-
-const updateSelectStyles = (select) => {
-  const state = appState.get()
-  select.value = state.activeType || ''
-  select.style.color = state.activeType ? getTypeColor(state.activeType) : '#212E4C'
-  select.style.fontWeight = state.activeType ? '600' : '400'
 }

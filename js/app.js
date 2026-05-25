@@ -21,7 +21,7 @@ const load = async (shouldScroll = false) => {
 
     appState.set({ total: result.total })
     renderPokemons(result.pokemons)
-    renderPagination()
+    renderPagination(() => load(true))
 
     if (shouldScroll) {
       window.scrollTo({ top: 0, behavior: 'smooth' })
